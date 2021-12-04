@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import './editdata.dart';
+import './main.dart';
 
 class Detail extends StatefulWidget {
 
@@ -12,6 +14,40 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
+
+  void deleteData(){
+    var url = "http://10.0.2.2/my_store/deleteData.php";
+    http.post(url, body: {
+      'id': widget.list[widget.index]['id']
+    });
+  }
+
+  void confirm(){
+    AlertDialog alertDialog = new AlertDialog(
+      content: new Text("Are you sure want to delete '${widget.list[widget.index]['item_name']}'"),
+      actions: <Widget>[
+        new RaisedButton(
+          child: new Text("Ok delete", style: new TextStyle(color: Colors.black),),
+          color: Colors.red,
+          onPressed: (){
+            deleteData();
+            Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (BuildContext context) => new Home(),
+              ),
+            );
+          }),
+        new RaisedButton(
+          child: new Text("Cancel", style: new TextStyle(color: Colors.black),),
+          color: Colors.green,
+          onPressed: () => Navigator.pop(context)),
+      ],
+    );
+
+    showDialog(context: context, child: alertDialog);
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +80,7 @@ class _DetailState extends State<Detail> {
                     new RaisedButton(
                       child: new Text("Delete"),
                       color: Colors.red,
-                      onPressed: (){},
+                      onPressed: () => confirm(),
                     ),
                   ],
                 ),
